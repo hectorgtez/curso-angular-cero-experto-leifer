@@ -9,6 +9,8 @@ import { CardPlayerComponent } from './components/card-player/card-player.compon
 import { SectionGenericComponent } from './components/section-generic/section-generic.component';
 import { PlayListHeaderComponent } from './components/play-list-header/play-list-header.component';
 import { PlayListBodyComponent } from './components/play-list-body/play-list-body.component';
+import { OrderListPipe } from './pipes/order-list.pipe';
+import { ImgBrokenDirective } from './directives/img-broken.directive';
 
 
 
@@ -20,7 +22,9 @@ import { PlayListBodyComponent } from './components/play-list-body/play-list-bod
     CardPlayerComponent,
     SectionGenericComponent,
     PlayListHeaderComponent,
-    PlayListBodyComponent
+    PlayListBodyComponent,
+    OrderListPipe,
+    ImgBrokenDirective
   ],
   imports: [
     CommonModule,
@@ -33,7 +37,9 @@ import { PlayListBodyComponent } from './components/play-list-body/play-list-bod
     CardPlayerComponent,
     SectionGenericComponent,
     PlayListHeaderComponent,
-    PlayListBodyComponent
+    PlayListBodyComponent,
+    OrderListPipe,
+    ImgBrokenDirective
   ]
 })
 export class SharedModule { }

@@ -1,5 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+
 import { Track } from '@core/interfaces/tracks.interface';
+import { MultimediaService } from '@shared/services/multimedia.service';
 
 @Component({
   selector: 'app-card-player',
@@ -9,4 +11,10 @@ import { Track } from '@core/interfaces/tracks.interface';
 export class CardPlayerComponent {
   @Input() mode: 'small' | 'big' = 'small';
   @Input() track!: Track;
+
+  private _multimediaService = inject(MultimediaService);
+
+  sendPlay(track: Track): void {
+    this._multimediaService.callback.emit(track);
+  }
 }

@@ -1,33 +1,44 @@
-import { Injectable } from '@angular/core';
-import { EMPTY, Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 
-import * as dataRaw from './../../../data/tracks.json';
+import { Observable, catchError, map, mergeMap, of } from 'rxjs';
 
-import { Track } from '@core/interfaces/tracks.interface';
+import { environment } from 'src/environments/environment.development';
+import { Track } from '../../../core/interfaces/tracks.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrackService {
-  $dataTracksTrending: Observable<Track[]> = EMPTY;
-  $dataTracksRandom: Observable<Track[]> = EMPTY;
+  private _http = inject(HttpClient);
+  private readonly _apiUrl = environment.apiUrl;
 
-  constructor() {
-    const { data }: any = (dataRaw as any).default;
+  constructor() { }
 
-    this.$dataTracksTrending = of(data);
-    this.$dataTracksRandom = new Observable( (observer) => {
-      const trackExample: Track = {
-        _id: 9,
-        name: 'El último Beso',
-        album: 'El Último Beso',
-        url: 'http://',
-        cover: 'https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/9a/48/09/9a480987-f892-c3c1-b53b-20b9ada8a5c6/8718857012054.jpg/600x600bf-60.jpg'
-      }
+  getAllTracks$(): Observable<any> {
+    return this._http.get(`${ this._apiUrl }/tracks`)
+      .pipe( map( (resp: any) => resp.data ) );
+  }
 
-      setTimeout( () => {
-        observer.next([ trackExample ]);
-      }, 4000);
-    });
+  getAllRandom$(): Observable<any> {
+    return this._http.get(`${ this._apiUrl }/tracks`)
+      .pipe(
+        mergeMap( ({ data }: any) => this.skipById(data, 2)),
+        catchError( error => {
+          const { status, statusText } = error;
+          console.log('Ups! Algo salió mal...', [status, statusText]);
+          return of([]);
+        }),
+        // map( (revertedData: any) => {
+        //   return revertedData.filter( (track: Track) => track._id !== 1)
+        // })
+      );
+  }
+
+  skipById(listTracks: Track[], id: number): Promise<Track[]> {
+    return new Promise( (resolve, reject) => {
+      const listTmp = listTracks.filter( a => a._id !== id );
+      resolve(listTmp);
+    })
   }
 }

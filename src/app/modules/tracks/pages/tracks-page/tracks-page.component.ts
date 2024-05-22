@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 
-import { Track } from '@core/interfaces/tracks.interface';
 import { TrackService } from '@modules/tracks/services/track.service';
 import { Subscription } from 'rxjs';
+import { Track } from '@interfaces/tracks.interface';
 
 @Component({
   selector: 'app-tracks-page',
@@ -17,21 +17,25 @@ export class TracksPageComponent implements OnInit, OnDestroy {
   tracksRandom: Track[] = []
 
   ngOnInit(): void {
-    const $observer1 = this._trackService.$dataTracksTrending
-      .subscribe( response => {
-        this.tracksTrending = response;
-        this.tracksRandom = response;
-      });
-
-    const $observer2 = this._trackService.$dataTracksRandom
-      .subscribe( response => {
-        this.tracksRandom = [...this.tracksRandom, ...response];
-      });
-
-    this.$observersList.push($observer1, $observer2);
+    this.loadDataAll();
+    this.loadDataRandom();
   }
 
-  ngOnDestroy(): void {
-    this.$observersList.forEach( u => u.unsubscribe() );
+  ngOnDestroy(): void { }
+
+  loadDataAll(): void {
+    this._trackService.getAllTracks$()
+      .subscribe( (response: Track[]) => {
+        this.tracksTrending = response;
+      });
+  }
+
+  loadDataRandom(): void {
+    this._trackService.getAllRandom$()
+      .subscribe( (response: Track[]) => {
+        this.tracksRandom = response;
+      }, err => {
+        console.log('Error de conexión');
+      });
   }
 }

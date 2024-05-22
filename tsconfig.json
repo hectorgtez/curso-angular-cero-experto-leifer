@@ -31,6 +31,9 @@
       "@shared/*": [
         "src/app/shared/*"
       ],
+      "@interfaces/*": [
+        "src/app/core/interfaces/*"
+      ]
     },
     "lib": [
       "ES2022",

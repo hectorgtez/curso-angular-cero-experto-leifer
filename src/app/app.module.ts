@@ -1,8 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
+
+import { CookieService } from 'ngx-cookie-service';
 
 import { AppRoutingModule } from './app-routing.module';
+import { InjectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -14,7 +17,10 @@ import { AppComponent } from './app.component';
     AppRoutingModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [
+    CookieService,
+    provideHttpClient(withInterceptors([InjectSessionInterceptor])),
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

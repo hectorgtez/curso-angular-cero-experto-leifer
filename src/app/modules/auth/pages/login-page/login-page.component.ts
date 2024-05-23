@@ -1,5 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
 import { AuthService } from '@modules/auth/services/auth.service';
 
 @Component({
@@ -9,6 +11,9 @@ import { AuthService } from '@modules/auth/services/auth.service';
 })
 export class LoginPageComponent implements OnInit {
   private _authService = inject(AuthService);
+  private _router = inject(Router);
+
+  errorSesion: boolean = false;
   formLogin: FormGroup = new FormGroup({});
 
   ngOnInit(): void {
@@ -26,7 +31,25 @@ export class LoginPageComponent implements OnInit {
   }
 
   sendLogin(): void {
+    this.errorSesion = false;
     const { email, password } = this.formLogin.value;
-    this._authService.sendCredentials(email, password);
+
+    this._authService.sendCredentials(email, password)
+      .subscribe({
+        next: resp => {
+          this._router.navigate(['/'])
+          console.log('Sesión iniciada correctamente!');
+        },
+        error: error => {
+          this.errorSesion = true;
+          console.log('Usuario y/o contraseña incorrectos');
+        }
+      });
+      // .subscribe( resp => {
+      //   console.log('Sesión iniciada correctamente!');
+      // }, error => {
+      //   this.errorSesion = true;
+      //   console.log('Usuario y/o contraseña incorrectos');
+      // });
   }
 }

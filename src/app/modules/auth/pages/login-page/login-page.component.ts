@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
+import { CookieService } from 'ngx-cookie-service';
+
 import { AuthService } from '@modules/auth/services/auth.service';
 
 @Component({
@@ -12,6 +14,7 @@ import { AuthService } from '@modules/auth/services/auth.service';
 export class LoginPageComponent implements OnInit {
   private _authService = inject(AuthService);
   private _router = inject(Router);
+  private _cookieService = inject(CookieService)
 
   errorSesion: boolean = false;
   formLogin: FormGroup = new FormGroup({});
@@ -36,8 +39,9 @@ export class LoginPageComponent implements OnInit {
 
     this._authService.sendCredentials(email, password)
       .subscribe({
-        next: resp => {
-          this._router.navigate(['/'])
+        next: ({ tokenSession }) => {
+          this._router.navigate(['/']);
+          this._cookieService.set('token', tokenSession, 4, '/');
           console.log('Sesión iniciada correctamente!');
         },
         error: error => {
@@ -45,11 +49,5 @@ export class LoginPageComponent implements OnInit {
           console.log('Usuario y/o contraseña incorrectos');
         }
       });
-      // .subscribe( resp => {
-      //   console.log('Sesión iniciada correctamente!');
-      // }, error => {
-      //   this.errorSesion = true;
-      //   console.log('Usuario y/o contraseña incorrectos');
-      // });
   }
 }

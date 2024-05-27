@@ -10,7 +10,18 @@ import { MultimediaService } from '@shared/services/multimedia.service';
 })
 export class CardPlayerComponent {
   @Input() mode: 'small' | 'big' = 'small';
-  @Input() track!: Track;
+  @Input() track: Track = {
+    _id: '',
+    album: '',
+    cover: '',
+    name: '',
+    url: '',
+    artist: {
+      name: '',
+      nickname: '',
+      nationality: ''
+    }
+  };
 
   private _multimediaService = inject(MultimediaService);
 
